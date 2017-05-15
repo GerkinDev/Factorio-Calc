@@ -6,6 +6,14 @@ const chalk = require('chalk');
 const CheckTypes = require('check-types');
 const process = require('process');
 
+
+function checkInstance(prototype, value){
+	return CheckTypes.instance(value, prototype);
+}
+function checkArrayOfInstance(prototype, value){
+	return CheckTypes.array.of.instance(value, prototype);
+}
+
 class Time{
 	constructor(value, unit = 'sec'){
 		this.value = value;
@@ -57,11 +65,15 @@ class BuildingType {
 			name,
 			buildings,
 		};
-		console.log(obj)
-		if (CheckTypes.not.like(obj, {
-			name: '',
-			buildings: [new Building()],
-		})) {
+		if (!CheckTypes.all(
+			CheckTypes.map(
+				obj,
+				{
+					name: CheckTypes.nonEmptyString,
+					buildings: checkArrayOfInstance.bind(null, Building),
+				}
+			)
+		)) {
 			console.error(`Wrong args for initing BuildingType ${name}:`, obj);
 			process.exit(1);
 		}
@@ -86,14 +98,18 @@ class Recipe {
 			buildingType,
 			time,
 		};
-		console.log(obj)
-		if (CheckTypes.not.like(obj, {
-			name: '',
-			fromDesc: [new IOGroup()],
-			toDesc: [new IOGroup()],
-			time: 0,
-			buildingType: new BuildingType('', []),
-		})) {
+		if (!CheckTypes.all(
+			CheckTypes.map(
+				obj,
+				{
+					name: CheckTypes.nonEmptyString,
+					fromDesc: checkArrayOfInstance.bind(null, IOGroup),
+					toDesc: checkArrayOfInstance.bind(null, IOGroup),
+					time: checkInstance.bind(null, Time),
+					buildingType: checkInstance.bind(null, BuildingType),
+				}
+			)
+		)) {
 			console.error(`Wrong args for initing Recipe ${name}:`, obj);
 			process.exit(1);
 		}
@@ -101,6 +117,7 @@ class Recipe {
 		this.from = fromDesc;
 		this.to = toDesc;
 		this.time = time;
+		this.buildingType = buildingType;
 	}
 
 	toCount(item){
@@ -251,8 +268,7 @@ class BuildingSetup {
 				console.warn(`Errors recipes retrieved for ${v.item.name} in BuildingSetup.getBuildingsForProduction: ${v.recipe}`);
 			else
 				recipeDuration = recipe.time;
-			const allowedBuildings = lodash.intersection(v.item.craftPlace.buildings, this[v.item.craftPlace.name]);
-			console.log(allowedBuildings, recipe);
+			const allowedBuildings = lodash.intersection(recipe.buildingType.buildings, this[recipe.buildingType.name]);
 			const building = lodash(allowedBuildings).sortBy(['speed']).value()[0];
 			acc.push({
 				building,
@@ -378,56 +394,56 @@ const items = {
 	iron_ore: new Item('Iron Ore'),
 
 	copper: new Item('Copper plate'),
-	iron: new Item('Iron plate', buildingTypes.furnaces),
+	iron: new Item('Iron plate'),
 
-	steel: new Item('Steel', buildingTypes.furnaces),
-	stone_brick: new Item('Stone brick', buildingTypes.furnaces),
+	steel: new Item('Steel'),
+	stone_brick: new Item('Stone brick'),
 
-	iron_gear: new Item('Iron gear', buildingTypes.assembling_machines),
-	copper_cable: new Item('Copper cable', buildingTypes.assembling_machines),
-	electric_mining_drill: new Item('Electric mining drill', buildingTypes.assembling_machines),
-	plastic_bar: new Item('Plastic bar', buildingTypes.chemical_plants),
-	pipe: new Item('Pipe', buildingTypes.assembling_machines),
-	sulfur: new Item('Sulfur', buildingTypes.chemical_plants),
-	battery: new Item('Battery', buildingTypes.assembling_machines),
-	engine_unit: new Item('Engine unit', buildingTypes.assembling_machines),
-	electric_engine_unit: new Item('Electric engine unit', buildingTypes.assembling_machines),
+	iron_gear: new Item('Iron gear'),
+	copper_cable: new Item('Copper cable'),
+	electric_mining_drill: new Item('Electric mining drill'),
+	plastic_bar: new Item('Plastic bar'),
+	pipe: new Item('Pipe'),
+	sulfur: new Item('Sulfur'),
+	battery: new Item('Battery'),
+	engine_unit: new Item('Engine unit'),
+	electric_engine_unit: new Item('Electric engine unit'),
 
-	speed_module_1: new Item('Speed module 1', buildingTypes.assembling_machines),
+	speed_module_1: new Item('Speed module 1'),
 
 	water: new Item('Water'),
 	petroleum: new Item('Petroleum'),
-	petroleum_gas: new Item('Petroleum gas', buildingTypes.refineries),
-	light_oil: new Item('Light oil', buildingTypes.refineries),
-	heavy_oil: new Item('Heavy oil', buildingTypes.refineries),
-	lubricant: new Item('Lubricant', buildingTypes.chemical_plants),
-	sulfuric_acid: new Item('Sulfuric acid', buildingTypes.chemical_plants),
+	petroleum_gas: new Item('Petroleum gas'),
+	light_oil: new Item('Light oil'),
+	heavy_oil: new Item('Heavy oil'),
+	lubricant: new Item('Lubricant'),
+	sulfuric_acid: new Item('Sulfuric acid'),
 
-	assembling_machine_1: new Item('Assembling machine 1', buildingTypes.assembling_machines),
+	assembling_machine_1: new Item('Assembling machine 1'),
 
-	electric_furnace: new Item('Electric furnace', buildingTypes.assembling_machines),
+	electric_furnace: new Item('Electric furnace'),
 
-	belt_1: new Item('Transport belt', buildingTypes.assembling_machines),
+	belt_1: new Item('Transport belt'),
 
-	inserter: new Item('Inserter', buildingTypes.assembling_machines),
-	inserter_long: new Item('Long handed inserter', buildingTypes.assembling_machines),
+	inserter: new Item('Inserter'),
+	inserter_long: new Item('Long handed inserter'),
 
-	grenade: new Item('Grenade', buildingTypes.assembling_machines),
-	firearm_magazine: new Item('Firearm magazine', buildingTypes.assembling_machines),
-	piercing_rounds_magazine: new Item('Piercing rounds magazine', buildingTypes.assembling_machines),
+	grenade: new Item('Grenade'),
+	firearm_magazine: new Item('Firearm magazine'),
+	piercing_rounds_magazine: new Item('Piercing rounds magazine'),
 
-	gun_turret: new Item('Gun turret', buildingTypes.assembling_machines),
+	gun_turret: new Item('Gun turret'),
 
-	electronic_circuit: new Item('Electronic circuit', buildingTypes.assembling_machines),
-	advanced_circuit: new Item('Advanced circuit', buildingTypes.assembling_machines),
-	processing_unit: new Item('Processing unit', buildingTypes.assembling_machines),
+	electronic_circuit: new Item('Electronic circuit'),
+	advanced_circuit: new Item('Advanced circuit'),
+	processing_unit: new Item('Processing unit'),
 
-	science_pack_1: new Item('Science pack 1', buildingTypes.assembling_machines),
-	science_pack_2: new Item('Science pack 2', buildingTypes.assembling_machines),
-	science_pack_3: new Item('Science pack 3', buildingTypes.assembling_machines),
-	science_pack_military: new Item('Military science pack', buildingTypes.assembling_machines),
-	science_pack_productivity: new Item('Productivity science pack', buildingTypes.assembling_machines),
-	science_pack_high_tech: new Item('High tech science pack', buildingTypes.assembling_machines),
+	science_pack_1: new Item('Science pack 1'),
+	science_pack_2: new Item('Science pack 2'),
+	science_pack_3: new Item('Science pack 3'),
+	science_pack_military: new Item('Military science pack'),
+	science_pack_productivity: new Item('Productivity science pack'),
+	science_pack_high_tech: new Item('High tech science pack'),
 };
 
 const recipes = {
@@ -439,8 +455,19 @@ const recipes = {
 	iron: new Recipe('Iron plate', [
 		new IOGroup(items.iron_ore, 1),
 	], [
-		new IOGroup(items.iron, 2),
+		new IOGroup(items.iron, 1),
 	], buildingTypes.furnaces, new Time(3.5, 'sec')),
+	steel: new Recipe('Steel', [
+		new IOGroup(items.iron, 5),
+	], [
+		new IOGroup(items.steel, 1),
+	], buildingTypes.furnaces, new Time(17.5, 'sec')),
+	stone_brick: new Recipe('Stone brick', [
+		new IOGroup(items.stone, 2),
+	], [
+		new IOGroup(items.stone_brick, 1),
+	], buildingTypes.furnaces, new Time(3.5, 'sec')),
+	
 	copper_cable: new Recipe('Copper cable', [
 		new IOGroup(items.copper, 1),
 	], [
@@ -510,12 +537,6 @@ const recipes = {
 	], [
 		new IOGroup(items.electric_mining_drill, 1),
 	], buildingTypes.assembling_machines, new Time(2, 'sec')),
-	plastic_bar: new Recipe('Plastic bar', [
-		new IOGroup(items.coal, 1),
-		new IOGroup(items.petroleum_gas, 20),
-	], [
-		new IOGroup(items.plastic_bar, 2),
-	], buildingTypes.chemical_plants, new Time(1, 'sec')),
 	piercing_rounds_magazine: new Recipe('Piercing rounds magazine', [
 		new IOGroup(items.steel, 1),
 		new IOGroup(items.copper, 5),
@@ -548,11 +569,6 @@ const recipes = {
 	], [
 		new IOGroup(items.gun_turret, 1),
 	], buildingTypes.assembling_machines, new Time(8, 'sec')),
-	steel: new Recipe('Steel', [
-		new IOGroup(items.iron, 5),
-	], [
-		new IOGroup(items.steel, 1),
-	], new Time(17.5, 'sec')),
 	science_pack_productivity: new Recipe('Production science pack', [
 		new IOGroup(items.electric_furnace, 1),
 		new IOGroup(items.assembling_machine_1, 1),
@@ -593,11 +609,6 @@ const recipes = {
 	], [
 		new IOGroup(items.assembling_machine_1, 1),
 	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
-	stone_brick: new Recipe('Stone brick', [
-		new IOGroup(items.stone, 2),
-	], [
-		new IOGroup(items.stone_brick, 1),
-	], new Time(3.5, 'sec')),
 	science_pack_high_tech: new Recipe('High tech science pack', [
 		new IOGroup(items.battery, 1),
 		new IOGroup(items.copper_cable, 30),
@@ -606,13 +617,6 @@ const recipes = {
 	], [
 		new IOGroup(items.science_pack_high_tech, 2),
 	], buildingTypes.assembling_machines, new Time(14, 'sec')),
-	sulfuric_acid: new Recipe('Sulfuric acid', [
-		new IOGroup(items.copper, 1),
-		new IOGroup(items.iron, 1),
-		new IOGroup(items.sulfuric_acid, 20),
-	], [
-		new IOGroup(items.battery, 1),
-	], new Time(5, 'sec')),
 	speed_module_1: new Recipe('Speed module', [
 		new IOGroup(items.electronic_circuit, 5),
 		new IOGroup(items.advanced_circuit, 5),
@@ -626,33 +630,48 @@ const recipes = {
 	], [
 		new IOGroup(items.processing_unit, 1),
 	], buildingTypes.assembling_machines, new Time(10, 'sec')),
-	sulfur: new Recipe('Sulfur', [
-		new IOGroup(items.petroleum_gas, 30),
-		new IOGroup(items.water, 30),
-	], [
-		new IOGroup(items.sulfur, 2),
-	], new Time(1, 'sec')),
-	sulfuric_acid: new Recipe('Sulfuric acid', [
-		new IOGroup(items.sulfur, 5),
-		new IOGroup(items.water, 100),
-		new IOGroup(items.iron, 1),
-	], [
-		new IOGroup(items.sulfuric_acid, 50),
-	], new Time(1, 'sec')),
+	
 	basic_oil_processing: new Recipe('Basic oil processing', [
 		new IOGroup(items.petroleum, 10),
 	], [
 		new IOGroup(items.light_oil, 3),
 		new IOGroup(items.heavy_oil, 3),
 		new IOGroup(items.petroleum_gas, 4),
-	], new Time(5, 'sec')),
+	], buildingTypes.refineries, new Time(5, 'sec')),
+	
+	plastic_bar: new Recipe('Plastic bar', [
+		new IOGroup(items.coal, 1),
+		new IOGroup(items.petroleum_gas, 20),
+	], [
+		new IOGroup(items.plastic_bar, 2),
+	], buildingTypes.chemical_plants, new Time(1, 'sec')),
+	sulfuric_acid: new Recipe('Sulfuric acid', [
+		new IOGroup(items.copper, 1),
+		new IOGroup(items.iron, 1),
+		new IOGroup(items.sulfuric_acid, 20),
+	], [
+		new IOGroup(items.battery, 1),
+	], buildingTypes.chemical_plants, new Time(5, 'sec')),
+	sulfur: new Recipe('Sulfur', [
+		new IOGroup(items.petroleum_gas, 30),
+		new IOGroup(items.water, 30),
+	], [
+		new IOGroup(items.sulfur, 2),
+	], buildingTypes.chemical_plants, new Time(1, 'sec')),
+	sulfuric_acid: new Recipe('Sulfuric acid', [
+		new IOGroup(items.sulfur, 5),
+		new IOGroup(items.water, 100),
+		new IOGroup(items.iron, 1),
+	], [
+		new IOGroup(items.sulfuric_acid, 50),
+	], buildingTypes.chemical_plants, new Time(1, 'sec')),
 	battery: new Recipe('Battery', [
 		new IOGroup(items.iron, 1),
 		new IOGroup(items.copper, 1),
 		new IOGroup(items.sulfuric_acid, 20),
 	], [
 		new IOGroup(items.battery, 1),
-	], new Time(5, 'sec')),
+	], buildingTypes.chemical_plants, new Time(5, 'sec')),
 };
 
 const displaySet = {
@@ -680,12 +699,13 @@ function formatStrDigits(nbr){
 }
 function outputTree(tree, set = displaySet.double, padding = 1){
 	function outputTree(prefix, value, index, arr){
-		var l = set.last[index == arr.length - 1 ? 0 : 1 ];
-		var c = set.children[value.children && value.children.length > 0 ? 0 : 1 ];
 		function stilyze(str){
 			return chalk.red(str);
 		}
-		console.log(`${prefix}${stilyze(`${l}${set.padd.repeat(padding - 1)}${c}`)} (${chalk.bold(formatStrDigits(value.count))}) ${value.item.craftPlace ? value.item.name : chalk.cyan(value.item.name)}`);
+		
+		var l = set.last[index == arr.length - 1 ? 0 : 1 ];
+		var c = set.children[value.children && value.children.length > 0 ? 0 : 1 ];
+		console.log(`${prefix}${stilyze(`${l}${set.padd.repeat(padding - 1)}${c}`)} (${chalk.bold(formatStrDigits(value.count))}) ${value.children ? value.item.name : chalk.cyan(value.item.name)}`);
 		lodash.forEach(value.children, outputTree.bind(null, prefix + chalk.red(l == set.last[0] ? ' ' : set.more) + (' '.repeat(padding - 1))));
 	}
 
