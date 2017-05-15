@@ -72,9 +72,8 @@ class BuildingType {
 }
 
 class Item {
-	constructor(name, craftPlace) {
+	constructor(name) {
 		this.name = name;
-		this.craftPlace = craftPlace;
 	}
 }
 
@@ -378,7 +377,7 @@ const items = {
 	copper_ore: new Item('Copper Ore'),
 	iron_ore: new Item('Iron Ore'),
 
-	copper: new Item('Copper plate', buildingTypes.furnaces),
+	copper: new Item('Copper plate'),
 	iron: new Item('Iron plate', buildingTypes.furnaces),
 
 	steel: new Item('Steel', buildingTypes.furnaces),
@@ -436,119 +435,119 @@ const recipes = {
 		new IOGroup(items.copper_ore, 1),
 	], [
 		new IOGroup(items.copper, 1),
-	], new Time(3.5, 'sec')),
+	], buildingTypes.furnaces, new Time(3.5, 'sec')),
 	iron: new Recipe('Iron plate', [
 		new IOGroup(items.iron_ore, 1),
 	], [
 		new IOGroup(items.iron, 2),
-	], new Time(3.5, 'sec')),
+	], buildingTypes.furnaces, new Time(3.5, 'sec')),
 	copper_cable: new Recipe('Copper cable', [
 		new IOGroup(items.copper, 1),
 	], [
 		new IOGroup(items.copper_cable, 2),
-	], new Time(0.5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
 	electronic_circuit: new Recipe('Electronic circuit', [
 		new IOGroup(items.copper_cable, 3),
 		new IOGroup(items.iron, 1),
 	], [
 		new IOGroup(items.electronic_circuit, 1),
-	], new Time(0.5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
 	iron_gear: new Recipe('Iron gear', [
 		new IOGroup(items.iron, 2),
 	], [
 		new IOGroup(items.iron_gear, 1),
-	], new Time(0.5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
 	belt_1: new Recipe('Transport belt', [
 		new IOGroup(items.iron_gear, 1),
 		new IOGroup(items.iron, 1),
 	], [
 		new IOGroup(items.belt_1, 2),
-	], new Time(0.5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
 	inserter: new Recipe('Inserter', [
 		new IOGroup(items.iron_gear, 1),
 		new IOGroup(items.iron, 1),
 		new IOGroup(items.electronic_circuit, 1),
 	], [
 		new IOGroup(items.inserter, 1),
-	], new Time(0.5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
 	inserter_long: new Recipe('Long handed inserter', [
 		new IOGroup(items.iron_gear, 1),
 		new IOGroup(items.iron, 1),
 		new IOGroup(items.inserter, 1),
 	], [
 		new IOGroup(items.inserter_long, 1),
-	], new Time(0.5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
 	science_pack_1: new Recipe('Science pack 1', [
 		new IOGroup(items.iron_gear, 1),
 		new IOGroup(items.copper, 1),
 	], [
 		new IOGroup(items.science_pack_1, 1),
-	], new Time(5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(5, 'sec')),
 	science_pack_2: new Recipe('Science pack 2', [
 		new IOGroup(items.inserter, 1),
 		new IOGroup(items.belt_1, 1),
 	], [
 		new IOGroup(items.science_pack_2, 1),
-	], new Time(6, 'sec')),
+	], buildingTypes.assembling_machines, new Time(6, 'sec')),
 	science_pack_3: new Recipe('Science pack 3', [
 		new IOGroup(items.advanced_circuit, 1),
 		new IOGroup(items.engine_unit, 1),
 		new IOGroup(items.electric_mining_drill, 1),
 	], [
 		new IOGroup(items.science_pack_3, 1),
-	], new Time(12, 'sec')),
+	], buildingTypes.assembling_machines, new Time(12, 'sec')),
 	advanced_circuit: new Recipe('Advanced circuit', [
 		new IOGroup(items.electronic_circuit, 2),
 		new IOGroup(items.plastic_bar, 2),
 		new IOGroup(items.copper_cable, 4),
 	], [
 		new IOGroup(items.advanced_circuit, 1),
-	], new Time(6, 'sec')),
+	], buildingTypes.assembling_machines, new Time(6, 'sec')),
 	electric_mining_drill: new Recipe('Electric mining drill', [
 		new IOGroup(items.electronic_circuit, 3),
 		new IOGroup(items.iron_gear, 5),
 		new IOGroup(items.iron, 10),
 	], [
 		new IOGroup(items.electric_mining_drill, 1),
-	], new Time(2, 'sec')),
+	], buildingTypes.assembling_machines, new Time(2, 'sec')),
 	plastic_bar: new Recipe('Plastic bar', [
 		new IOGroup(items.coal, 1),
 		new IOGroup(items.petroleum_gas, 20),
 	], [
 		new IOGroup(items.plastic_bar, 2),
-	], new Time(1, 'sec')),
+	], buildingTypes.chemical_plants, new Time(1, 'sec')),
 	piercing_rounds_magazine: new Recipe('Piercing rounds magazine', [
 		new IOGroup(items.steel, 1),
 		new IOGroup(items.copper, 5),
 		new IOGroup(items.firearm_magazine, 1),
 	], [
 		new IOGroup(items.piercing_rounds_magazine, 1),
-	], new Time(3, 'sec')),
+	], buildingTypes.assembling_machines, new Time(3, 'sec')),
 	firearm_magazine: new Recipe('Firearm magazine', [
 		new IOGroup(items.iron, 4),
 	], [
 		new IOGroup(items.firearm_magazine, 1),
-	], new Time(1, 'sec')),
+	], buildingTypes.assembling_machines, new Time(1, 'sec')),
 	science_pack_military: new Recipe('Military science pack', [
 		new IOGroup(items.grenade, 1),
 		new IOGroup(items.piercing_rounds_magazine, 1),
 		new IOGroup(items.gun_turret, 1),
 	], [
 		new IOGroup(items.science_pack_military, 2),
-	], new Time(10, 'sec')),
+	], buildingTypes.assembling_machines, new Time(10, 'sec')),
 	grenade: new Recipe('Grenade', [
 		new IOGroup(items.iron, 5),
 		new IOGroup(items.coal, 10),
 	], [
 		new IOGroup(items.grenade, 1),
-	], new Time(8, 'sec')),
+	], buildingTypes.assembling_machines, new Time(8, 'sec')),
 	gun_turret: new Recipe('Gun turret', [
 		new IOGroup(items.iron, 20),
 		new IOGroup(items.iron_gear, 10),
 		new IOGroup(items.copper, 10),
 	], [
 		new IOGroup(items.gun_turret, 1),
-	], new Time(8, 'sec')),
+	], buildingTypes.assembling_machines, new Time(8, 'sec')),
 	steel: new Recipe('Steel', [
 		new IOGroup(items.iron, 5),
 	], [
@@ -560,40 +559,40 @@ const recipes = {
 		new IOGroup(items.electric_engine_unit, 1),
 	], [
 		new IOGroup(items.science_pack_productivity, 2),
-	], new Time(14, 'sec')),
+	], buildingTypes.assembling_machines, new Time(14, 'sec')),
 	electric_furnace: new Recipe('Electric furnace', [
 		new IOGroup(items.advanced_circuit, 5),
 		new IOGroup(items.steel, 10),
 		new IOGroup(items.stone_brick, 10),
 	], [
 		new IOGroup(items.electric_furnace, 1),
-	], new Time(5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(5, 'sec')),
 	electric_engine_unit: new Recipe('Electric engine unit', [
 		new IOGroup(items.engine_unit, 1),
 		new IOGroup(items.electronic_circuit, 2),
 		new IOGroup(items.lubricant, 15),
 	], [
 		new IOGroup(items.electric_engine_unit, 1),
-	], new Time(10, 'sec')),
+	], buildingTypes.assembling_machines, new Time(10, 'sec')),
 	engine_unit: new Recipe('Engine unit', [
 		new IOGroup(items.steel, 1),
 		new IOGroup(items.iron_gear, 1),
 		new IOGroup(items.pipe, 2),
 	], [
 		new IOGroup(items.engine_unit, 1),
-	], new Time(10, 'sec')),
+	], buildingTypes.assembling_machines, new Time(10, 'sec')),
 	pipe: new Recipe('Pipe', [
 		new IOGroup(items.iron, 1),
 	], [
 		new IOGroup(items.pipe, 1),
-	], new Time(0.5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
 	assembling_machine_1: new Recipe('Assembling machine 1', [
 		new IOGroup(items.electronic_circuit, 3),
 		new IOGroup(items.iron_gear, 5),
 		new IOGroup(items.iron, 9),
 	], [
 		new IOGroup(items.assembling_machine_1, 1),
-	], new Time(0.5, 'sec')),
+	], buildingTypes.assembling_machines, new Time(0.5, 'sec')),
 	stone_brick: new Recipe('Stone brick', [
 		new IOGroup(items.stone, 2),
 	], [
@@ -606,7 +605,7 @@ const recipes = {
 		new IOGroup(items.speed_module_1, 1),
 	], [
 		new IOGroup(items.science_pack_high_tech, 2),
-	], new Time(14, 'sec')),
+	], buildingTypes.assembling_machines, new Time(14, 'sec')),
 	sulfuric_acid: new Recipe('Sulfuric acid', [
 		new IOGroup(items.copper, 1),
 		new IOGroup(items.iron, 1),
@@ -619,14 +618,14 @@ const recipes = {
 		new IOGroup(items.advanced_circuit, 5),
 	], [
 		new IOGroup(items.speed_module_1, 1),
-	], new Time(15, 'sec')),
+	], buildingTypes.assembling_machines, new Time(15, 'sec')),
 	processing_unit: new Recipe('Speed module', [
 		new IOGroup(items.electronic_circuit, 20),
 		new IOGroup(items.advanced_circuit, 2),
 		new IOGroup(items.sulfuric_acid, 5),
 	], [
 		new IOGroup(items.processing_unit, 1),
-	], new Time(10, 'sec')),
+	], buildingTypes.assembling_machines, new Time(10, 'sec')),
 	sulfur: new Recipe('Sulfur', [
 		new IOGroup(items.petroleum_gas, 30),
 		new IOGroup(items.water, 30),
